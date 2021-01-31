@@ -34,16 +34,17 @@ for submission in submissions:
         print(submission.title)
 
         for cashtag in cashtags:
-            submitted_time = datetime.datetime.fromtimestamp(submission.created_utc).isoformat()
+            if cashtag in stocks:
+                submitted_time = datetime.datetime.fromtimestamp(submission.created_utc).isoformat()
 
-            try:
-                cursor.execute("""
-                    INSERT INTO mention (dt, stock_id, message, source, url)
-                    VALUES (%s, %s, %s, 'wallstreetbets', %s)
-                """, (submitted_time, stocks[cashtag], submission.title, submission.url))
+                try:
+                    cursor.execute("""
+                        INSERT INTO mention (dt, stock_id, message, source, url)
+                        VALUES (%s, %s, %s, 'wallstreetbets', %s)
+                    """, (submitted_time, stocks[cashtag], submission.title, submission.url))
 
-                connection.commit()
-            except Exception as e:
-                print(e)
-                connection.rollback()
+                    connection.commit()
+                except Exception as e:
+                    print(e)
+                    connection.rollback()
             
